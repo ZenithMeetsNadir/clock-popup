@@ -84,15 +84,6 @@ pub fn main() !void {
         return error.DisplayGetFailed;
     }
 
-    std.log.debug("{d} displays found", .{disp_count});
-
-    var i: usize = 0;
-    while (i < disp_count) : (i += 1) {
-        std.log.debug("{d}", .{disps[i]});
-    }
-
-    std.log.debug("using display {d}", .{disps[0]});
-
     const disp_mode = c.SDL_GetCurrentDisplayMode(disps[0]);
     if (disp_mode == null) {
         std.log.err("failed to get display mode: {s}\n", .{c.SDL_GetError()});
