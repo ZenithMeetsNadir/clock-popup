@@ -21,11 +21,12 @@ pub fn build(b: *std.Build) void {
         },
     });
 
+    exe_mod.addLibraryPath(.{ .cwd_relative = "/usr/local/lib" });
     exe_mod.linkSystemLibrary("SDL3", .{});
     exe_mod.linkSystemLibrary("SDL3_ttf", .{});
 
     const exe = b.addExecutable(.{
-        .name = "clock_popup",
+        .name = "clock-popup",
         .root_module = exe_mod,
     });
 

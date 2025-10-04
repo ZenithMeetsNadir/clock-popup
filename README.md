@@ -1,0 +1,30 @@
+# Clock-popup
+
+This is a fun little spontaneous project I've put together in the span of two days. It is intended to be a popup window that displays the current time in a fancy whip of motion, telling the time for a brief moment.
+
+It isn't very optimised, since movement of the window is achieved entirely via requesting new window positions. So your wm surely won't be sitting idle.
+
+I highly suggest you configure your wm and compositor to leave this window out of any open/close animations, shadows, blur etc. Those effects unfortunatelly get in the way of the promised clean look, which the popup window manages on its own.
+
+## Installation
+
+As far as I'm concerned, this will only work on linux for now. It *could* possibly work anywhere if you managed to build and link the SDL libraries yourself, since SDL is cross-platform
+
+- If you have the SDL libs (namely `libSDL3.so` and `libSDL3_ttf.so`) installed system-wide:
+    
+    1) make sure to copy the font from `assets/` to `/usr/share/fonts/TTF/` or point the path in `src/main.zig` to any font you with to use (in addition, adjust the offsets accordingly, so that the displayed text is properly centered)
+
+    2) from this directory, run:
+        
+            sudo zig build --release=safe install --prefix /usr/local
+
+- Have `make` download, build and install SDLs for you as well as build and install the whole thing  
+
+    1) from this directory, just run:
+    
+            make
+
+Either way, the binary should now be installed in `/usr/local/bin`
+
+
+    
