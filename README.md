@@ -12,13 +12,13 @@ As far as I'm concerned, this will only work on linux for now. It *could* possib
 
 - If you have the SDL libs (namely `libSDL3.so` and `libSDL3_ttf.so`) installed system-wide:
     
-    1) make sure to copy the font from `assets/` to `/usr/share/fonts/TTF/` or point the path in `src/main.zig` to any font you with to use (in addition, adjust the offsets accordingly, so that the displayed text is properly centered)
+    1) make sure to copy the font from `assets/` to `/usr/share/fonts/TTF/` or point the path in `src/main.zig` to any font you wish to use (in addition, adjust the offsets accordingly, so that the displayed text is properly centered)
 
     2) from this directory, run:
         
             sudo zig build --release=safe install --prefix /usr/local
 
-- Have `make` download, build and install SDLs for you as well as build and install the whole thing  
+- Have `make` download, build and install SDLs for you as well as build and install the whole thing:
 
     1) from this directory, just run:
     
