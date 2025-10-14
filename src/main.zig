@@ -2,6 +2,7 @@ const std = @import("std");
 const time = std.time;
 const c = @import("clock_popup").c;
 const anim = @import("anim.zig");
+const raster = @import("raster.zig");
 
 const time_buf_size = 8;
 const title = "clock popup";
@@ -25,9 +26,9 @@ const fg_color: c.SDL_Color = .{
 const text_padding = 40;
 
 const neg_top_offset_rel: f32 = 0;
-const neg_left_offset_rel: f32 = 1 / 8;
-const neg_bottom_offset_rel: f32 = 1 / 8;
-const neg_right_offset_rel: f32 = 1 / 8;
+const neg_left_offset_rel: f32 = 0;
+const neg_bottom_offset_rel: f32 = @as(f32, 1) / 8.0;
+const neg_right_offset_rel: f32 = @as(f32, 1) / 8.0;
 
 const neg_top_offset: f32 = font_size * neg_top_offset_rel;
 const neg_left_offset: f32 = font_size * neg_left_offset_rel;
@@ -91,7 +92,8 @@ pub fn main() !void {
     }
 
     const win_w = text_surf.*.w + 2 * text_padding - @as(c_int, @intFromFloat(neg_left_offset + neg_right_offset));
-    const win_h = text_surf.*.h + 2 * text_padding - @as(c_int, @intFromFloat(neg_top_offset + neg_bottom_offset));
+    const floating_win_h = text_surf.*.h + 2 * text_padding - @as(c_int, @intFromFloat(neg_top_offset + neg_bottom_offset));
+    const win_h = floating_win_h + anim_y_offset;
 
     c.SDL_DestroySurface(text_surf);
 
@@ -112,7 +114,7 @@ pub fn main() !void {
     }
 
     const center_x = @divTrunc(disp_mode.*.w - win_w, 2);
-    const center_y = @divTrunc(disp_mode.*.h - win_h, 2);
+    const center_y = @divTrunc(disp_mode.*.h - floating_win_h, 2);
 
     _ = c.SDL_SetWindowPosition(win, center_x, center_y);
 
@@ -130,8 +132,9 @@ pub fn main() !void {
 
     var event: c.SDL_Event = undefined;
     var running = true;
+    var y_frame_snapshot: c_int = undefined;
 
-    while (running and !anim_end) {
+    while (running) { //and !anim_end) {
         while (c.SDL_PollEvent(&event)) {
             switch (event.type) {
                 c.SDL_EVENT_QUIT => running = false,
@@ -150,7 +153,11 @@ pub fn main() !void {
                 const frame_dir = if (anim_first_part) (1 - frame) else frame;
 
                 const y_frame = anim_dir * @as(c_int, @intFromFloat(anim_y_offset * (1 - frame_dir)));
-                _ = c.SDL_SetWindowPosition(win, center_x, center_y + y_frame);
+                if (anim_first_part)
+                    y_frame_snapshot = y_frame;
+
+                _ = c.SDL_SetRenderDrawColor(rndr, 0, 0, 0, 0);
+                _ = c.SDL_RenderClear(rndr);
 
                 _ = c.SDL_SetRenderDrawColor(
                     rndr,
@@ -159,7 +166,28 @@ pub fn main() !void {
                     @intFromFloat(frame_dir * bg_color.b),
                     @intFromFloat(frame_dir * bg_color.a),
                 );
-                _ = c.SDL_RenderClear(rndr);
+
+                // _ = c.SDL_SetRenderDrawColor(
+                //     rndr,
+                //     0x33,
+                //     0x33,
+                //     0x33,
+                //     0x88,
+                // );
+
+                const back_rect: c.SDL_FRect = .{
+                    .x = 0,
+                    .y = @floatFromInt(y_frame_snapshot),
+                    .w = @floatFromInt(win_w),
+                    .h = @floatFromInt(floating_win_h),
+                };
+                _ = c.SDL_RenderFillRect(rndr, &back_rect);
+
+                const rad_color: c.SDL_Color = .{ .r = 0xff, .g = 0xff, .b = 0xff, .a = 0xff };
+                const r = 100;
+                const p: c.SDL_Point = .{ .x = 2 * r, .y = 2 * r };
+
+                raster.renderFillOuterQCircle(rndr, p, r, 2, rad_color);
 
                 const fg_color_frame: c.SDL_Color = .{
                     .r = @intFromFloat(frame_dir * fg_color.r),
@@ -179,6 +207,10 @@ pub fn main() !void {
                     return error.TextRenderFailed;
                 }
 
+                const details = c.SDL_GetPixelFormatDetails(text_surf.*.format);
+                const key = c.SDL_MapRGBA(details, null, 0, 0, 0, 0);
+                _ = c.SDL_SetSurfaceColorKey(text_surf, true, key);
+
                 const text_tex = c.SDL_CreateTextureFromSurface(rndr, text_surf);
                 if (text_tex == null) {
                     std.log.err("failed to create texture from surface: {s}\n", .{c.SDL_GetError()});
@@ -187,18 +219,18 @@ pub fn main() !void {
                 defer c.SDL_DestroyTexture(text_tex);
                 c.SDL_DestroySurface(text_surf);
 
-                var src_rect: c.SDL_FRect = .{
+                const src_rect: c.SDL_FRect = .{
                     .x = neg_left_offset,
                     .y = neg_top_offset,
                     .w = @as(f32, @floatFromInt(text_tex.*.w)) - (neg_left_offset + neg_right_offset),
                     .h = @as(f32, @floatFromInt(text_tex.*.h)) - (neg_top_offset + neg_bottom_offset),
                 };
 
-                var dst_rect: c.SDL_FRect = .{
+                const dst_rect: c.SDL_FRect = .{
                     .x = text_padding,
-                    .y = text_padding,
-                    .w = @as(f32, @floatFromInt(text_tex.*.w)) - (neg_left_offset + neg_right_offset),
-                    .h = @as(f32, @floatFromInt(text_tex.*.h)) - (neg_top_offset + neg_bottom_offset),
+                    .y = @as(f32, @floatFromInt(y_frame_snapshot)) + text_padding,
+                    .w = src_rect.w,
+                    .h = src_rect.h,
                 };
 
                 _ = c.SDL_RenderTexture(rndr, text_tex, &src_rect, &dst_rect);
