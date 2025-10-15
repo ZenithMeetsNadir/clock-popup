@@ -9,14 +9,14 @@ pub fn renderFillOuterQCircle(rndr: ?*c.SDL_Renderer, p: c.SDL_Point, r: i32, q:
     var err = dx - (r << 1);
 
     const xq: i32 = switch (q) {
-        4, 3 => 1,
-        1, 2 => -1,
+        4, 1 => 1,
+        2, 3 => -1,
         else => unreachable,
     };
 
     const yq: i32 = switch (q) {
-        4, 1 => 1,
-        2, 3 => -1,
+        3, 4 => 1,
+        1, 2 => -1,
         else => unreachable,
     };
 

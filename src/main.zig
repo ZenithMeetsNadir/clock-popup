@@ -23,6 +23,13 @@ const fg_color: c.SDL_Color = .{
     .a = 0xff,
 };
 
+const trans_color: c.SDL_Color = .{
+    .r = 0xff,
+    .g = 0xff,
+    .b = 0xff,
+    .a = 0xff,
+};
+
 const text_padding = 40;
 
 const neg_top_offset_rel: f32 = 0;
@@ -35,10 +42,12 @@ const neg_left_offset: f32 = font_size * neg_left_offset_rel;
 const neg_bottom_offset: f32 = font_size * neg_bottom_offset_rel;
 const neg_right_offset: f32 = font_size * neg_right_offset_rel;
 
+const anim_y_offset = 300;
+
+const border_radius = 20;
+
 var rndr: ?*c.SDL_Renderer = null;
 var win: ?*c.SDL_Window = null;
-
-const anim_y_offset = 300;
 
 pub fn main() !void {
     if (!c.SDL_Init(c.SDL_INIT_VIDEO)) {
@@ -183,12 +192,6 @@ pub fn main() !void {
                 };
                 _ = c.SDL_RenderFillRect(rndr, &back_rect);
 
-                const rad_color: c.SDL_Color = .{ .r = 0xff, .g = 0xff, .b = 0xff, .a = 0xff };
-                const r = 100;
-                const p: c.SDL_Point = .{ .x = 2 * r, .y = 2 * r };
-
-                raster.renderFillOuterQCircle(rndr, p, r, 2, rad_color);
-
                 const fg_color_frame: c.SDL_Color = .{
                     .r = @intFromFloat(frame_dir * fg_color.r),
                     .g = @intFromFloat(frame_dir * fg_color.g),
@@ -234,6 +237,12 @@ pub fn main() !void {
                 };
 
                 _ = c.SDL_RenderTexture(rndr, text_tex, &src_rect, &dst_rect);
+
+                raster.renderFillOuterQCircle(rndr, .{ .x = win_w - border_radius, .y = y_frame_snapshot + border_radius }, border_radius, 1, trans_color);
+                raster.renderFillOuterQCircle(rndr, .{ .x = border_radius, .y = y_frame_snapshot + border_radius }, border_radius, 2, trans_color);
+                raster.renderFillOuterQCircle(rndr, .{ .x = border_radius, .y = y_frame_snapshot + floating_win_h - border_radius }, border_radius, 3, trans_color);
+                raster.renderFillOuterQCircle(rndr, .{ .x = win_w - border_radius, .y = y_frame_snapshot + floating_win_h - border_radius }, border_radius, 4, trans_color);
+
                 _ = c.SDL_RenderPresent(rndr);
             } else if (anim_first_part) {
                 anim_first_part = false;
