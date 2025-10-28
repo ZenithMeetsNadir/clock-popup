@@ -1,6 +1,18 @@
-
+.PHONY: install
 install: /usr/local/lib/libSDL3.so /usr/local/lib/libSDL3_ttf.so /usr/share/fonts/TTF/PressStart-Regular.ttf
 	sudo zig build --release=safe install --prefix /usr/local
+
+.PHONY: clean
+clean:
+	sudo rm -rf SDL SDL_ttf SDL_image
+	sudo rm -rf .zig-cache
+
+.PHONY: derg
+derg: checkout-derg /usr/local/lib/libSDL3_image.so install
+
+.PHONY: checkout-derg
+checkout-derg:
+	git checkout main-derg
 
 SDL:
 	mkdir -p SDL
@@ -21,6 +33,16 @@ SDL_ttf:
 	cd SDL_ttf && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 	cmake --build SDL_ttf/build
 	sudo cmake --install SDL_ttf/build --prefix /usr/local
+
+SDL_image:
+	mkdir -p SDL_image
+	git clone https://github.com/libsdl-org/SDL_image.git SDL_image
+	cd SDL_image && git checkout release-3.2.4
+
+/usr/local/lib/libSDL3_image.so: SDL_image /usr/local/lib/libSDL3.so
+	cd SDL_image && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+	cmake --build SDL_image/build
+	sudo cmake --install SDL_image/build --prefix /usr/local
 
 /usr/share/fonts/TTF/PressStart-Regular.ttf:
 	sudo mkdir -p /usr/share/fonts/TTF
