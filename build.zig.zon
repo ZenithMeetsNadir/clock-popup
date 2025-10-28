@@ -1,6 +1,6 @@
 .{
     .name = .clock_popup,
-    .version = "0.2.0",
+    .version = "0.3.0",
     .fingerprint = 0xc967d7e2b7862be,
     .minimum_zig_version = "0.15.1",
     .dependencies = .{},

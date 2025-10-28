@@ -5,7 +5,7 @@ install: /usr/local/lib/libSDL3.so /usr/local/lib/libSDL3_ttf.so /usr/share/font
 SDL:
 	mkdir -p SDL
 	git clone https://github.com/libsdl-org/SDL.git SDL
-	cd SDL && git checkout release-3.2.24
+	cd SDL && git checkout release-3.2.6
 
 /usr/local/lib/libSDL3.so: SDL
 	cd SDL && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release 

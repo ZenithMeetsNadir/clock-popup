@@ -24,10 +24,10 @@ const fg_color: c.SDL_Color = .{
 };
 
 const trans_color: c.SDL_Color = .{
-    .r = 0xff,
-    .g = 0xff,
-    .b = 0xff,
-    .a = 0xff,
+    .r = 0,
+    .g = 0,
+    .b = 0,
+    .a = 0,
 };
 
 const text_padding = 40;
@@ -143,7 +143,7 @@ pub fn main() !void {
     var running = true;
     var y_frame_snapshot: c_int = undefined;
 
-    while (running) { //and !anim_end) {
+    while (running and !anim_end) {
         while (c.SDL_PollEvent(&event)) {
             switch (event.type) {
                 c.SDL_EVENT_QUIT => running = false,
@@ -175,14 +175,6 @@ pub fn main() !void {
                     @intFromFloat(frame_dir * bg_color.b),
                     @intFromFloat(frame_dir * bg_color.a),
                 );
-
-                // _ = c.SDL_SetRenderDrawColor(
-                //     rndr,
-                //     0x33,
-                //     0x33,
-                //     0x33,
-                //     0x88,
-                // );
 
                 const back_rect: c.SDL_FRect = .{
                     .x = 0,
@@ -238,10 +230,10 @@ pub fn main() !void {
 
                 _ = c.SDL_RenderTexture(rndr, text_tex, &src_rect, &dst_rect);
 
-                raster.renderFillOuterQCircle(rndr, .{ .x = win_w - border_radius, .y = y_frame_snapshot + border_radius }, border_radius, 1, trans_color);
+                raster.renderFillOuterQCircle(rndr, .{ .x = win_w - border_radius - 1, .y = y_frame_snapshot + border_radius }, border_radius, 1, trans_color);
                 raster.renderFillOuterQCircle(rndr, .{ .x = border_radius, .y = y_frame_snapshot + border_radius }, border_radius, 2, trans_color);
                 raster.renderFillOuterQCircle(rndr, .{ .x = border_radius, .y = y_frame_snapshot + floating_win_h - border_radius }, border_radius, 3, trans_color);
-                raster.renderFillOuterQCircle(rndr, .{ .x = win_w - border_radius, .y = y_frame_snapshot + floating_win_h - border_radius }, border_radius, 4, trans_color);
+                raster.renderFillOuterQCircle(rndr, .{ .x = win_w - border_radius - 1, .y = y_frame_snapshot + floating_win_h - border_radius }, border_radius, 4, trans_color);
 
                 _ = c.SDL_RenderPresent(rndr);
             } else if (anim_first_part) {
