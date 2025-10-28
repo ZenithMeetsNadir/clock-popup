@@ -1,7 +1,7 @@
 .{
     .name = .clock_popup,
-    .version = "0.3.0",
-    .fingerprint = 0xc967d7e2b7862be,
+    .version = "1.0.0",
+    .fingerprint = 0xc967d7e1c9b7245,
     .minimum_zig_version = "0.15.1",
     .dependencies = .{},
     .paths = .{

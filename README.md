@@ -1,6 +1,11 @@
 # Clock-popup
 
-This is a fun little spontaneous project I've put together in the span of two days. It is intended to be a popup window that displays the current time in a fancy whip of motion, telling the time for a brief moment.
+This is a fun little spontaneous project I've originally put together in the span of two days. It is intended to be a popup window that displays the current time in a fancy whip of motion, telling the time for a brief moment.
+
+Currently, it has two flavors: 
+
+- A neat popup window that just tells the time (`main` branch)
+- A slightly bigger popup window with the same functionality, with a sleeping derg splayed on top of it (`main-derg` branch - my recommendations here)
 
 I highly suggest you configure your wm and compositor to leave this window out of any open/close animations, shadows, blur etc. Those effects unfortunatelly get in the way of the promised clean look, which the popup window manages on its own.
 
@@ -8,21 +13,25 @@ I highly suggest you configure your wm and compositor to leave this window out o
 
 As far as I'm concerned, this will only work on linux for now. It *could* possibly work anywhere if you managed to build and link the SDL libraries yourself, since SDL is cross-platform
 
-- If you have the SDL libs (namely `libSDL3.so` and `libSDL3_ttf.so`) installed system-wide:
-    
-    1) make sure to copy the font from `assets/` to `/usr/share/fonts/TTF/` or point the path in `src/main.zig` to any font you wish to use (optionally, adjust the offsets accordingly, so that the displayed text is properly centered)
+Tool prequisities: `zig`, `make`.
 
-    2) from this directory, run:
-        
-            sudo zig build --release=safe install --prefix /usr/local
+The SDL libraries also have a list of their dependencies, which you should install via you package manager. Arch example:
 
-- Have `make` download, build and install SDLs for you as well as build and install the whole thing:
+    sudo pacman -S alsa-lib cmake hidapi ibus jack libdecor libgl libpulse libusb libx11 libxcursor libxext libxinerama libxkbcommon libxrandr libxrender libxss libxtst mesa ninja pipewire sndio vulkan-driver vulkan-headers wayland wayland-protocols freetype2 harfbuzz libpng
 
-    1) from this directory, just run:
-    
-            make
+If you are not sure which dependencies to install, check out SDL wiki on github.
 
-Either way, the binary should now be installed in `/usr/local/bin`. You might want to add include it in `PATH`, along with `/usr/local/lib` to help dynamic loader find the shared libs.
+Depending on which flavor you would fancy, have `make` download, build and install SDLs for you as well as build and install the whole thing:
+
+- from this directory, just run one of the following:
+
+        make
+
+    or
+
+        make derg
+
+Either way, the binary should install in `/usr/local/bin`. You might want to add include it in `PATH`.
 
 
     
