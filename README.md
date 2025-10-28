@@ -22,7 +22,7 @@ As far as I'm concerned, this will only work on linux for now. It *could* possib
     
             make
 
-Either way, the binary should now be installed in `/usr/local/bin`. You might want to add include it in `PATH`.
+Either way, the binary should now be installed in `/usr/local/bin`. You might want to add include it in `PATH`, along with `/usr/local/lib` to help dynamic loader find the shared libs.
 
 
     
