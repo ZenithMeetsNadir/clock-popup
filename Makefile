@@ -8,7 +8,7 @@ clean:
 	sudo rm -rf .zig-cache
 
 .PHONY: derg
-derg: checkout-derg /usr/local/lib/libSDL3_image.so install
+derg: checkout-derg /usr/local/lib/libSDL3_image.so /usr/local/share/clock-popup/derg-frames install
 
 .PHONY: checkout-derg
 checkout-derg:
@@ -47,3 +47,7 @@ SDL_image:
 /usr/share/fonts/TTF/PressStart-Regular.ttf:
 	sudo mkdir -p /usr/share/fonts/TTF
 	sudo cp assets/PressStart-Regular.ttf /usr/share/fonts/TTF/PressStart-Regular.ttf
+
+/usr/local/share/clock-popup/derg-frames:
+	sudo mkdir -p /usr/local/share/clock-popup/derg-frames
+	sudo cp assets/derg-frames/* /usr/local/share/clock-popup/derg-frames/
