@@ -2,10 +2,14 @@
 install: /usr/local/lib/libSDL3.so /usr/local/lib/libSDL3_ttf.so /usr/share/fonts/TTF/PressStart-Regular.ttf
 	sudo zig build --release=safe install --prefix /usr/local
 
+.PHONY: clean-sdls
+clean-sdls:
+	rm -rf SDL SDL_ttf SDL_image
+
 .PHONY: clean
 clean:
-	sudo rm -rf SDL SDL_ttf SDL_image
-	sudo rm -rf .zig-cache
+	rm -rf SDL/build SDL_ttf/build SDL_image/build
+	rm -rf .zig-cache
 
 .PHONY: derg
 derg: checkout-derg /usr/local/lib/libSDL3_image.so /usr/local/share/clock-popup/derg-frames install
